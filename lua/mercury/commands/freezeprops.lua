@@ -1,10 +1,3 @@
---Webhook Stuff
-local chatlog = "https://discordapp.com/api/webhooks/443871714368159766/LUEO-5MDoV4jp39SHLmsp0ZYWsgi3z0X-mCFMi74iZq0UC2oZYA_mVlGsbbQEhZqh6Fq"
-local avatar = "http://i.imgur.com/c4xeJix.png" --Default avatar
-
-
-
-
 
 local MCMD = {}
 MCMD.Command = "freezeall"
@@ -27,7 +20,7 @@ function callfunc(caller, args)
    end
 
     
-    return true,"",true,{caller, Mercury.Config.Colors.Default, " has frozened all of their props."}
+    return true,"",true,{caller, Mercury.Config.Colors.Default, " has frozen all of their props."}
 
 end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
@@ -55,7 +48,7 @@ function callfunc(caller, args)
 
   	end
    end
-    return true,"",true,{caller, Mercury.Config.Colors.Default, " frozened the map."}
+    return true,"",true,{caller, Mercury.Config.Colors.Default, " froze the map."}
     
 end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
@@ -80,7 +73,7 @@ function callfunc(caller, args)
         end
     end
    end
-    return true,"",true,{caller, Mercury.Config.Colors.Default, " has frozed all of ", args[1], "'s props."}
+    return true,"",true,{caller, Mercury.Config.Colors.Default, " froze all of ", args[1], "'s props."}
     
 end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
