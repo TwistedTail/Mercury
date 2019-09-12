@@ -2,12 +2,6 @@ Mercury.Commands.AddPrivilege("commcontrol")
 Mercury.Commands.AddPrivilege("adminchat")
 
 
-// Set up webhook variables
-local chatlog = "https://discordapp.com/api/webhooks/607364726531293185/LUO1Yu-LMaaxyABgziQtO9pEo36iy_IKTbJVYaLeG_nC82yWLIxEwKfxuF2Jmhrjvbc-"
-local avatar = "http://i.imgur.com/c4xeJix.png" --Default avatar 
-
-
-
 //because functions
 function findPlayerByName(name)
 	for _,ply in pairs (player.GetAll()) do
@@ -55,56 +49,10 @@ hook.Add("PlayerSay","MercuryComm",function(XAD, txt,tea )
 	if etab[1]=="!aboutmercury" or etab[1]=="!mercury" or etab[1]=="!about" then 
 		
 		for k,v in pairs(player.GetAll()) do 
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"Mercury Administration System ~ version", Color(0,255,255), " (Malleus Gaming [HOTEL 9.3]) ",Color(255,255,255) ,"Created by" , Color(255,0,255) , " FreezeBug" , Color(255,255,255), " with help from", Color(255,0,0), " Rusketh, Mythic, Merc, and !cake"})
+				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"Mercury Administration System ~ version", Color(0,255,255), " (HOTEL 9.3) ",Color(255,255,255) ,"Created by" , Color(255,0,255) , " FreezeBug" , Color(255,255,255), " with help from", Color(255,0,0), " Rusketh, Mythic, Merc, and !cake"})
 		end
 	end
 
-//Addons
-	if etab[1]=="!addons" or etab[1]=="!workshop" then 
-		
-		for k,v in pairs(player.GetAll()) do 
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"Our workshop collection: ",Color(66,134,244) , "https://steamcommunity.com/workshop/filedetails/?id=724732734"})
-		end
-	end
-
-//ACF
-	if etab[1]=="!acf" then 
-		
-		for k,v in pairs(player.GetAll()) do 
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"ACF is a customizable combat damage system for Garry's Mod!"})
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"Quick download link: ",Color(66,134,244) , "https://github.com/nrlulz/ACF/archive/master.zip"})
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"TortoiseSVN [Subversion] link: ",Color(66,134,244) , "https://github.com/nrlulz/ACF/trunk"})
-		end
-	end
-
-//Donate
-	if etab[1]=="!donate" then 
-		
-		for k,v in pairs(player.GetAll()) do 
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"This server is costing a bit over $100 per month, so donations are extremely helpful!"})
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"Quick donation link: ",Color(66,134,244) , "https://www.paypal.me/CheezusCrust"})
-		end
-	end
-
-//ACF Missiles
-	if etab[1]=="!acfmissiles" then 
-		
-		for k,v in pairs(player.GetAll()) do 
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"ACF Missiles adds racked munitions to ACF"})
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"ZIP: ",Color(66,134,244) , "https://github.com/Bubbus/ACF-Missiles/archive/master.zip"})
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"SVN: ",Color(66,134,244) , "https://github.com/Bubbus/ACF-Missiles/trunk"})
-		end
-	end
-
-	if etab[1]=="!tcz" then 
-		
-		for k,v in pairs(player.GetAll()) do 
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"TCZ is our dedicated battle server."})
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"You should fight there to relieve stress on the build server!"})
-				Mercury.Util.SendMessage(v,{Color(255,255,255) ,"IP: ",Color(66,134,244) , "144.217.10.192:27016"})
-
-		end
-	end
 
 //Private messages (so fucking hacky lmao)
 	if etab[1]=="!pm" or etab[1]=="/pm"then
@@ -128,8 +76,7 @@ hook.Add("PlayerSay","MercuryComm",function(XAD, txt,tea )
 	
 
 
-end, -18 ) // END OF PLAYERSAY HOOK
-
+end, -18 ) 
 local plymeta = FindMetaTable("Player")
 
 function plymeta:isIgnoring(target)
