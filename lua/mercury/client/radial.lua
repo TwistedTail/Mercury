@@ -316,7 +316,23 @@ surface.CreateFont( "m3RAD_ERROR", {
         ["slay"] = true,
         ["explode"] = true,
         ["sslay"] = true,
-        ["gag"] = true,
+        ["gag"] = function(object)
+            local timestab = {}
+            local function DoBan(self)
+                             
+                                surface.PlaySound("mercury/mercury_info.ogg")
+                                net.Start("Mercury:Commands")
+                                            net.WriteString("gag")
+                                            net.WriteTable({object.player,self.data})
+                                net.SendToServer()
+                
+            end
+            timestab[1] = {text = "Session" , font = nil , radialadd = 20, data = "",decolor = nil, onselect =DoBan ,onselectright = function(self) RadialMenu.GoBack() end}
+            timestab[2] = {text = "Permanent" , font = nil , radialadd = 20, data = true,decolor = nil, onselect =DoBan ,onselectright = function(self) RadialMenu.GoBack() end}
+                
+            surface.PlaySound("mercury/mercury_error.ogg") 
+            RadialMenu.Update(timestab)
+        end,
         ["ungag"] = true,
         ["mute"] = true,
         ["unmute"] = true,
@@ -330,8 +346,10 @@ surface.CreateFont( "m3RAD_ERROR", {
         ["noclip"] = true,
         ["freezeall"] = false,
         ["freezemap"] = false,
+        ["freezeallof"] = true,
         ["return"] = false,
         ["Radial Menu"] = 0,
+
          
         ban = function(object)
             local timestab = {}
@@ -340,7 +358,7 @@ surface.CreateFont( "m3RAD_ERROR", {
                                 surface.PlaySound("mercury/mercury_info.ogg")
                                 net.Start("Mercury:Commands")
                                             net.WriteString("ban")
-                                            net.WriteTable({object.player,self.data,"Quick ban via menu"})
+                                            net.WriteTable({object.player,self.data,"go to bed"})
                                 net.SendToServer()
                 
             end
@@ -350,7 +368,7 @@ surface.CreateFont( "m3RAD_ERROR", {
             
             timestab[7] = {text = "PERMANENT" , font = nil , radialadd = 5, data = 0,decolor = nil, onselect =DoBan ,onselectright = function(self) RadialMenu.GoBack() end}
                 
-             
+            surface.PlaySound("mercury/mercury_error.ogg") 
             RadialMenu.Update(timestab)
         end,
     }

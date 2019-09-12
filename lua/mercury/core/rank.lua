@@ -90,7 +90,7 @@ function Mercury.Ranks.SaveRank(index,configuration)
 	if !configuration or type(configuration)~="table" then return false,"MISSING OR NON-TABLE CONFIGURATION TABLE" end
 
 	//Encode config in json
-	local cfg = util.TableToJSON(configuration)
+	local cfg = util.TableToJSON(configuration,true)
 	file.Write("mercury/ranks/" .. index .. ".txt", cfg)
 	return true,"Rank configuration saved to disk."
 end
@@ -338,50 +338,57 @@ function META:CanUserTarget(x)
 	if !x then return false end
 	return self:GetImmunity() >= x:GetImmunity()
 end
-///////////////////////LOADING RANKS////////////////////////
-local rnks = file.Find("mercury/ranks/*.txt","DATA")
-print("Loading ranks....")
-for k,v in pairs(rnks) do
-	print("MercuryCreateRankFromFile: "  .. tostring(v))
-	local content = file.Read("mercury/ranks/" .. v )
-	local index = string.sub(v,0,#v-4) // rip .txt
-	local rtab = util.JSONToTable(content)
-	pcall(function()
-		if Mercury.Config["UseTeams"] == true then 
-			local title = rtab.title
-			local order = rtab.order
-			local color = rtab.color 
 
-			team.SetUp( order - Mercury.Config["TeamOffset"]  , title, color, false ) 
+function Mercury.Ranks.LoadRanks()
 
-		end
+	///////////////////////LOADING RANKS////////////////////////
+	local rnks = file.Find("mercury/ranks/*.txt","DATA")
+	print("Loading ranks....")
+	for k,v in pairs(rnks) do
+		print("MercuryCreateRankFromFile: "  .. tostring(v))
+		local content = file.Read("mercury/ranks/" .. v )
+		local index = string.sub(v,0,#v-4) // rip .txt
+		local rtab = util.JSONToTable(content)
+		pcall(function()
+			if Mercury.Config["UseTeams"] == true then 
+				local title = rtab.title
+				local order = rtab.order
+				local color = rtab.color 
 
-	end)
-	if index=="owner" then // end users...
-	//END USERS
-	// FUCKING END USERS.
-	// FUUUUUUUUUUUUUUUUU
+				team.SetUp( order - Mercury.Config["TeamOffset"]  , title, color, false ) 
 
-		print("Verifying owner rank...")
-		local privbnk = rtab.privileges
-		if !privbnk then privbnk = {} end
-			local allcmds = false 
-			for k,v in pairs(privbnk) do 
-				if v=="*root" then 
-					allcmds = true 
+			end
+ 
+		end)
+		if index=="owner" then // end users...
+		//END USERS
+		// FUCKING END USERS.
+		// FUUUUUUUUUUUUUUUUU
+
+			print("Verifying owner rank...")
+			local privbnk = rtab.privileges
+			if !privbnk then privbnk = {} end
+				local allcmds = false 
+				for k,v in pairs(privbnk) do 
+					if v=="*root" then 
+						allcmds = true 
+					end
 				end
-			end
-			if not allcmds then 
-				print("ERROR!:  Owner rank could not be verified to have *root, pushing *root into rank table .")
-				privbnk[#privbnk + 1] = "*root"
-				rtab.privileges = privbnk
-			else 
-				print("OK: Owner rank verified to have *root flag.")
-			end
+				if not allcmds then 
+					print("ERROR!:  Owner rank could not be verified to have *root, pushing *root into rank table .")
+					privbnk[#privbnk + 1] = "*root"
+					rtab.privileges = privbnk
+				else 
+					print("OK: Owner rank verified to have *root flag.")
+				end
+		end
+		Mercury.Ranks.RankTable[index] = rtab
 	end
-	Mercury.Ranks.RankTable[index] = rtab
-end
-print("Ranks loaded.")
+	print("Ranks loaded.")
+end 
+
+Mercury.Ranks.LoadRanks()
+
 ///////////////////////////////////////////////////////////
 function Mercury.Ranks.RefreshTeams()
 	for k,rtab in pairs(Mercury.Ranks.RankTable) do
@@ -419,6 +426,13 @@ function Mercury.Ranks.SendRankUpdateToClients()
 	net.Send(player.GetAll())
 end
 
+function Mercury.Ranks.SendRankUpdateToPlayer(ply)
+	net.Start("Mercury:RankData")
+			net.WriteString("SEND_RANKS")
+			net.WriteTable(Mercury.Ranks.RankTable )
+	net.Send(ply)
+end
+
  
 net.Receive("Mercury:RankData",function()
 	local command = net.ReadString()
@@ -444,8 +458,8 @@ timer.Create("Mercury_UpdatePlayerInfo",0.5,0,function()
 end)
 
 
-hook.Add("PlayerInitialSpawn","MARS_Rank_Initialspawn",function() 
-	Mercury.Ranks.SendRankUpdateToClients()
+hook.Add("PlayerInitialSpawn","MARS_Rank_Initialspawn",function(ply) 
+	Mercury.Ranks.SendRankUpdateToPlayer(ply)
 end) 
 
 Mercury.Ranks.SendRankUpdateToClients()

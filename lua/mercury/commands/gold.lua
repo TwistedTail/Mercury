@@ -74,6 +74,7 @@ if SERVER then
         if bones > 1 or what:IsPlayer( ) or what:IsNPC( ) then
             rag = ents.Create( "prop_ragdoll" )
                 rag:SetModel( what:GetModel( ) )
+                rag._MercuryRagdoll = true
                 rag:SetPos( what:GetPos( ) )
                 rag:SetAngles( what:GetAngles( ) )
 				--rag:EmitSound( "spy-ciclefreeze.wav" )
@@ -203,6 +204,9 @@ MCMD.HasMenu = true
 function callfunc(caller,args)
     local target = args[1]
 
+	if IsValid(target.RagREnt) then 
+        return false,{target," is already golded." }
+    end  
 
     MakeGold(target)
     target:EmitSound("weapons/saxxy_impact_gen_06.wav")
@@ -300,13 +304,21 @@ function callfunc(caller,args)
     local what = args[1]
     local target = args[1]
 
-    
+    if args[1] and IsValid(args[1]) and args[1]:IsPlayer() then
+        if not args[1]:Alive() then
+            return false, {args[1]," is dead.   "} , false, {}
+        end
+    end
 
+    if IsValid(target.RagREnt) then 
+        return false,{target," is already ragdolled." }
+    end  
+	
     local rag, vel, solid, wep, fakewep, bones
-    target:EmitSound("weapons/axe_hit_flesh3.wav")
+    --target:EmitSound("weapons/axe_hit_flesh3.wav")
  
         bones = what:GetPhysicsObjectCount( )
-        print(bones)
+ 
         vel = what:GetVelocity( )
         
         solid = what:GetSolid( )
@@ -321,6 +333,7 @@ function callfunc(caller,args)
     
         if bones > 1 or what:IsPlayer( ) or what:IsNPC( ) then
             rag = ents.Create( "prop_ragdoll" )
+                rag._MercuryRagdoll = true
                 rag:SetModel( what:GetModel( ) )
                 rag:SetPos( what:GetPos( ) )
                 rag:SetAngles( what:GetAngles( ) )
@@ -341,14 +354,14 @@ function callfunc(caller,args)
     
                 if IsValid( bone1 ) then
                     weld, weld2 = what:GetBonePosition( what:TranslatePhysBoneToBone( bone ) )
-                    bone1:SetVelocity( what:GetVelocity() * 1.5 )
+                    bone1:SetVelocity( what:GetVelocity() * 1.5    )
                     bone1:SetPos( weld )
                     bone1:SetAngles( weld2 )
                     bone1:SetMaterial( "flesh" )
                     
                     bone1:AddGameFlag( FVPHYSICS_NO_SELF_COLLISIONS )
                     bone1:AddGameFlag( FVPHYSICS_HEAVY_OBJECT )
-                    bone1:SetMass( 100 )
+                    bone1:SetMass( 1 )
                     
                     bone1:Sleep( )
                                         
@@ -482,6 +495,47 @@ function MCMD.GenerateMenu(frame)
 end
 
 Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
+
+
+
+MCMD = {}
+MCMD.Command = "cleandolls"
+MCMD.Verb = "cleanup mercury ragdolls"
+MCMD.RconUse = true
+MCMD.Useage = ""
+MCMD.UseImmunity = true
+MCMD.PlayerTarget = true
+MCMD.HasMenu = false
+MCMD.AllowWildcard = true
+
+
+
+
+
+function callfunc(caller,args)
+    local target = args[1]
+
+    for k,v in pairs(ents.GetAll()) do 
+        if v._MercuryRagdoll == true then 
+            v:Remove()
+        end 
+    end
+    return true,"",true,{caller, Mercury.Config.Colors.Default," cleaned up " ,Mercury.Config.Colors.Server,"Mercury's", Mercury.Config.Colors.Default, " ragdolls."} //RETURN CODES.
+    // First argument true / false -- Command succeeded? 
+    // Second argument: String error, if first argument is false this is pushed to the client.
+    // Third argument true / false -- supress default messages
+    // Fourth argument table, the message to print to chat if second argument is true.
+end
+
+
+function MCMD.GenerateMenu(frame)
+
+end
+
+Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
+
+
+
 
 
 

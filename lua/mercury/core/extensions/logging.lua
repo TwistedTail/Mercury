@@ -66,15 +66,18 @@ if Mercury.Logs.Configs.IsActive == true then
 	local function MsgC(COLVEC, STRM)
 		file.Append("mercury/logs/" .. Mercury.Logs.FileName .. ".txt", Mercury.Logs.GetTimeStamp() .. STRM)
 		Mercury.Logs.OldMsgC(COLVEC, STRM)
+		--ServerLog(Mercury.Logs.GetTimeStamp() .. STRM .."\n")
 	end
 
 	local function print(STRM)
 		file.Append("mercury/logs/" .. Mercury.Logs.FileName .. ".txt",  STRM .. "\n")
 		Mercury.Logs.OldPrint(STRM)
+		--ServerLog(Mercury.Logs.GetTimeStamp() .. STRM .."\n")
 	end
 
 	function Mercury.Logs.CustomEvent(event)
 		Msg("[HG] ") MsgC(Color(255,0,0,255), "[Custom Event]") print(" "..event)
+			--ServerLog(Mercury.Logs.GetTimeStamp() .. event .."\n")
 	end
 
 	function Mercury.Logs.CustomEventNoOutput(event)

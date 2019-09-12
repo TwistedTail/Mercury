@@ -74,6 +74,11 @@ MCMD = {
 end
 Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
 
+
+
+
+
+
 -- Set settings color
 MCMD = {
 	["Command"] = "setsettingcolor",
@@ -237,3 +242,61 @@ function callfunc(caller,args)
 end
 Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
 
+MCMD = {
+	["Command"] = "setmotdurl",
+	["Verb"] = "@SETUSETEAMS",
+	["RconUse"] = true,
+	["Useage"] = "set",
+	["UseImmunity"] =  false,
+	["HasMenu"] = false,
+	["Category"] = "Config",
+	["UseCustomPrivCheck"] = true,
+	["PrivCheck"] = ConfigPrivilegeCheck,
+	["AllowWildcard"] = true
+}
+
+ function callfunc(caller,args) 
+	if !args[1] then return false,"Specify a URL" end 
+
+	Mercury.Config.MotdURL = args[1]
+    Mercury.ConfigManager.WriteConfig()
+
+	return true, "heh", true, {Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has set the ", Mercury.Config.Colors.Setting , "MOTD URL" ,Mercury.Config.Colors.Default , " to ", Mercury.Config.Colors.Arg, args[1]} 
+end
+Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
+
+
+MCMD = {
+	["Command"] = "setusemotd",
+	["Verb"] = "@SETUSETEAMS",
+	["RconUse"] = true,
+	["Useage"] = "setusemotd <true / false>",
+	["UseImmunity"] =  false,
+	["HasMenu"] = false,
+	["Category"] = "Config",
+	["UseCustomPrivCheck"] = true,
+	["PrivCheck"] = ConfigPrivilegeCheck,
+	["AllowWildcard"] = true
+}
+
+function callfunc(caller,args) 
+   	if !args[1] then return false, "true / false not specified." end
+   	args[1] = string.lower(args[1])
+
+   	if args[1]=="true" then 
+   		Mercury.Config.UseMOTD = true
+   		Mercury.ConfigManager.WriteConfig()
+   		return true,"",true,{caller,Mercury.Config.Colors.Default," has set the MOTD", Mercury.Config.Colors.Setting, " to " , Mercury.Config.Colors.Default,"be used."}
+
+   	else 
+   		Mercury.Config.UseMOTD = false
+   		Mercury.ConfigManager.WriteConfig()
+   		return true,"",true,{caller,Mercury.Config.Colors.Default," has set the MOTD", Mercury.Config.Colors.Setting, " to not " , Mercury.Config.Colors.Default,"be used."}
+
+
+   	end
+    target:Lock(true)
+
+    return true, "", false, {}
+end
+Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)

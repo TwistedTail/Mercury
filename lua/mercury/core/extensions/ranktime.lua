@@ -24,14 +24,19 @@ function RankTime.SaveAll()
         RankTime.SaveSingle(v)
     end
 end
- 
+  
 function RankTime.PIS(P)
     local uid = P:UniqueID()
     if file.Exists("mercury/timedata/" ..  uid .. ".txt","DATA") then
         local fstr = file.Read("mercury/timedata/" ..  uid .. ".txt","DATA")
         local ptime = tonumber(fstr,10)
-         P.__TIME = ptime
-         P.TimeLoaded = true
+        if ptime then 
+             P.__TIME = ptime
+             P.TimeLoaded = true 
+        
+        else 
+            MsgC(Mercury.Config.Colors.Error,"Mercury encountered an error loading the time for " .. tostring(P) .. ", check their data file.\n")
+        end 
         else
         P.__TIME = 0
         P.TimeLoaded = true
@@ -47,7 +52,8 @@ function RankTime.Tick()
     pcall(function() // Be safe.
     lastsave = lastsave + 1
     for k,v in pairs(player.GetAll()) do
-        if v.TimeLoaded==true then
+
+        if v.TimeLoaded==true and v.__TIME then
             v.__TIME = v.__TIME + 1
             v:SetNWInt("ranktime",v.__TIME)
         end
@@ -60,9 +66,7 @@ function RankTime.Tick()
     end)
 end
  
-for k,v in pairs(player.GetAll()) do
-    v:ChatPrint(v.__TIME)
-end
+
 
 timer.Create("RankTick",1,0,function()
     pcall(function()
@@ -70,5 +74,5 @@ timer.Create("RankTick",1,0,function()
     
     end)
 end)
-
+Mercury.RankTime = RankTime 
 hook.Add("PlayerInitialSpawn","Mercury:RankTime",function(x) RankTime.PIS(x) end)

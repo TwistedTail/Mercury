@@ -10,7 +10,7 @@ Mercury.Config = {
 } 
    
 
-
+ 
 local t_then = SysTime()
 local now = SysTime
           
@@ -141,15 +141,12 @@ hook.Add("DrawOverlay","MercuryStart",function()
     
 end 
 
-
  surface.SetDrawColor(Color(255,255,255,255))
- surface.SetMaterial(MerMat)
- surface.DrawTexturedRect(50,65 + 70,200,100)
  surface.SetDrawColor(Color(0,0,0,255))
- surface.DrawRect(50,50 + 70,500,25)
+ surface.DrawRect(ScrW() * 0.73 ,ScrH() * 0.79  + 70,500,25)
  surface.SetDrawColor(Color(math.abs(math.sin(CurTime())) * 255 ,math.abs(math.sin(CurTime()*2)) * 255,math.abs(math.sin(CurTime()*6)) * 255,255))
- surface.DrawRect(50,50 + 70,500 * (rmc / msgc) ,25)
- draw.DrawText( msg[1] or "LOAD OK" , "ChatFont", 200, 50 + 70, Color(255,255,255), TEXT_ALLIGN_LEFT) 
+ surface.DrawRect(ScrW() * 0.73 ,ScrH() * 0.79 + 70,500 * (rmc / msgc) ,25)
+ draw.DrawText( msg[1] or "LOAD OK" , "ChatFont", ScrW() * 0.73 + 200, ScrH() * 0.79 + 70, Color(255,255,255), TEXT_ALLIGN_LEFT) 
 
 end )
 
@@ -171,6 +168,11 @@ if CLIENT then
 		end
 	end
 
+	Mercury.ModHook.Call("ExtensionsLoaded")
+    Mercury.ModHook.Call("AddPrivileges")
+    Mercury.ModHook.Call("PrivilegesReady")
+    Mercury.ModHook.Call("ClientSideLoaded")
+	
 end
 
 msgc = #msg

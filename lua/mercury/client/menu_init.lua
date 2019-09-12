@@ -63,8 +63,8 @@ local o_vgui_create = vgui.Create
 function Mercury.Menu.Open()
 	function vgui.Create(...)
 		local gas = o_vgui_create(...)
-		//gas:SetSkin("mercury3")
-		//print("skin")
+		--gas:SetSkin("mercury3")
+		--print("skin")
 		return gas
 	end 
 

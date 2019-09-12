@@ -31,7 +31,7 @@ function UDL.GetData(data)
 			file.Write("mercury/users/" .. uid .. ".txt",util.TableToJSON({rank = "default"}))
 			return {rank = "default"}
 		end
-	elseif type(data)==string then
+	elseif type(data)=="string" then
 		local uid = SAFESID(data)
 		if file.Exists("mercury/users/"..uid..".txt","DATA") then
 			local pts =  file.Read("mercury/users/" .. uid .. ".txt")
@@ -66,7 +66,7 @@ function UDL.SaveData(data,tablea)
 
 		end
 		return true
-	elseif type(data)==string then
+	elseif type(data)=="string" then
 		local uid = SAFESID(data)
 		file.Write("mercury/users/" .. uid .. ".txt",util.TableToJSON(tablea))
 		return true

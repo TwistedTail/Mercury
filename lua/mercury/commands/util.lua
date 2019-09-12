@@ -2,6 +2,11 @@
 
 
 Mercury.Commands.AddPrivilege("utest")
+local function UTestPrivCheck(ply)
+    return ply:HasPrivilege('utest')
+end 
+
+
 
 -- Noclip
 local MCMD = Mercury.Commands.CreateTable("noclip", "", true, "<player>", true, false, true, "Fun")
@@ -239,10 +244,111 @@ Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
 
 
+-- Crash
+MCMD = {
+    ["Command"] = "crash",
+    ["Verb"] = "crashed",
+    ["RconUse"] = true,
+    ["Useage"] = "crash <player>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = false,
+    ["Category"] = "Fun",
+    ["UseCustomPrivCheck"] = false,
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = false
+}
+
+function callfunc(caller, args)
+    -- Caller is the player who issued the command.
+    -- args is the string or player arguments that may have been passed.
+    PrintTable(args)
+    if not args[1] then
+        return false, "No player was supplied to the command", false, {}
+    end
+
+    if args[1] and IsValid(args[1]) and args[1]:IsPlayer() then
+        args[1]:SendLua("cam.End3D()")
+    end
+
+    return true, "", false, {}
+end
+
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+
+-- Deepfry
+MCMD = {
+    ["Command"] = "df",
+    ["Verb"] = "deepfried",
+    ["RconUse"] = true,
+    ["Useage"] = "df <player>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = false,
+    ["Category"] = "Fun",
+    ["UseCustomPrivCheck"] = false,
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = true
+}
+
+function callfunc(caller, args)
+    -- Caller is the player who issued the command.
+    -- args is the string or player arguments that may have been passed.
+    PrintTable(args)
+    if not args[1] then
+        return false, "No player was supplied to the command", false, {}
+    end
+
+    if args[1] and IsValid(args[1]) and args[1]:IsPlayer() then
+        args[1]:SendLua("LocalPlayer():ConCommand(\"pp_colormod 1;pp_colormod_contrast 3;pp_colormod_color 5;pp_sharpen 1;pp_sharpen_contrast 10;pp_sharpen_distance 10\")")
+    end
+
+    return true, "", false, {}
+end
+
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+
+
+-- Un-Deepfry
+MCMD = {
+    ["Command"] = "udf",
+    ["Verb"] = "undeepfried",
+    ["RconUse"] = true,
+    ["Useage"] = "udf <player>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = false,
+    ["Category"] = "Fun",
+    ["UseCustomPrivCheck"] = false,
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = true
+}
+
+function callfunc(caller, args)
+    -- Caller is the player who issued the command.
+    -- args is the string or player arguments that may have been passed.
+    PrintTable(args)
+    if not args[1] then
+        return false, "No player was supplied to the command", false, {}
+    end
+
+    if args[1] and IsValid(args[1]) and args[1]:IsPlayer() then
+        args[1]:SendLua("LocalPlayer():ConCommand(\"pp_colormod 0;pp_sharpen 0\")")
+    end
+
+    return true, "", false, {}
+end
+
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+
+
 Mercury.Commands.AddPrivilege("god")
 
 local function GodPrivilegeCheck(ply)
-    return ply:HasPrivilege("god")
+    return ply:HasPrivilege("god",true)
 end
 
 -- Decals
@@ -642,4 +748,139 @@ end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
 
+hook.Add("PlayerLeaveVehicle","Mercury_BackSeat",function(P,V)
+    P.MercuryLastVehicle = V
 
+end)
+
+
+-- Slay
+MCMD = {
+    ["Command"] = "unseat",
+    ["Verb"] = "unsat",
+    ["RconUse"] = true,
+    ["Useage"] = "slay <player>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = false,
+    ["Category"] = "Fun",
+    ["UseCustomPrivCheck"] = false,
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = true
+}
+
+function callfunc(caller, args)
+    -- Caller is the player who issued the command.
+    -- args is the string or player arguments that may have been passed.
+
+    if not args[1] then
+        return false, "No player was supplied to the command", false, {}
+    end
+    args[1]:ExitVehicle()
+
+    return true, "", false, {caller, Mercury.Config.Colors.Default, " has sent " , args[1] , " to their last seat."}
+end
+
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+
+-- Slay
+MCMD = {
+    ["Command"] = "backseat",
+    ["Verb"] = "backseat'd",
+    ["RconUse"] = true,
+    ["Useage"] = "slay <player>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = true,
+    ["Category"] = "Fun",
+    ["UseCustomPrivCheck"] = false,
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = true
+}
+
+function callfunc(caller, args)
+    -- Caller is the player who issued the command.
+    -- args is the string or player arguments that may have been passed.
+
+    if not args[1] then
+        return false, "No player was supplied to the command", false, {}
+    end
+
+    if args[1] and IsValid(args[1]) and args[1]:IsPlayer() then
+        if args[1].MercuryLastVehicle and IsValid(args[1].MercuryLastVehicle ) then 
+            args[1]:EnterVehicle(args[1].MercuryLastVehicle )
+        else 
+            return false,"Your last seat no longer exists."
+        end 
+    end
+
+    return true, "", true, {caller, Mercury.Config.Colors.Default, " has sent " , args[1] , " to their last seat."}
+end
+
+
+function MCMD.GenerateMenu(frame)
+    local selectedplayer = nil
+ 
+    local ctrl = vgui.Create( "DListView", frame)
+    ctrl:AddColumn("Players")
+    ctrl:SetSize(210, 380)    
+    ctrl:SetPos(10, 0)
+               
+    local SpawnButton = vgui.Create("DButton" , frame)
+    SpawnButton:SetPos(240, 40)
+    SpawnButton:SetText("Backseat")
+    SpawnButton:SetSize(130, 60)
+    SpawnButton:SetDisabled(true)
+    SpawnButton.DoClick = function(self)
+        if self:GetDisabled() == true then return false end
+        surface.PlaySound("buttons/button3.wav")
+        net.Start("Mercury:Commands")
+            net.WriteString("backseat")
+            net.WriteTable({selectedplayer})
+        net.SendToServer()
+    end
+ 
+    local players = player.GetAll()
+    local t = {}
+    for _, ply in ipairs( players ) do
+        local item = ctrl:AddLine( ply:Nick() )
+        item.ply = ply
+    end
+ 
+    function ctrl:OnRowSelected(lineid, isselected)
+        local line_obj = self:GetLine(lineid)
+        surface.PlaySound("buttons/button6.wav")
+        SpawnButton:SetDisabled(false)
+        selectedplayer = line_obj.ply
+        return true
+    end
+end
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+MCMD = {}
+MCMD.Command = "mercury_utest_error_handler"
+MCMD.Verb = "tested the error handling system"
+MCMD.RconUse = true
+MCMD.Useage = "<player>"
+MCMD.UseImmunity = true
+MCMD.PlayerTarget = false
+MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = UTestPrivCheck
+
+
+
+
+function callfunc(caller,args)
+    this_function_doesnt_exist()
+
+    return true,"",false,{} //RETURN CODES.
+end
+
+
+function MCMD.GenerateMenu(frame)
+
+end
+
+Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)

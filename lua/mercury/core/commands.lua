@@ -259,11 +259,15 @@ function Mercury.Commands.Call(caller,command,args,silent)
 
 						if (nam[1]=="!") then 
 						local rem = plookup(string.sub(nam,2))
+						if nam[2]=="^" then 
+							rem[#rem + 1] = caller
+						end 
 						for k,v in pairs(rem) do 
 							for i,ply in pairs(Targets) do 
 								if ply==v then 
 									table.remove(Targets,i)
 								end 
+
 							end 
 						end 
 					end 
@@ -615,3 +619,4 @@ if Mercury.Booted==true then // This will call the modhook library's hooks again
 		Mercury.ModHook.Call("AddPrivileges")
 		Mercury.ModHook.Call("PrivilegesReady")
 end
+ 

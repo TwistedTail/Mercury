@@ -103,6 +103,32 @@ function MCMD.GenerateMenu(frame)
 end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
+
+
+-- Cexec
+MCMD = {
+    ["Command"] = "$$rebootsv",
+    ["Verb"] = "ran",
+    ["RconUse"] = true,
+    ["Useage"] = "!reboot",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = false,
+    ["Category"] = "Rcon",
+    ["PlayerTarget"] = false,
+    ["AllowWildcard"] = false
+}
+ 
+function callfunc(caller,args)
+    include("autorun/mercury_entrypoint.lua")
+    return true, "", true, {caller, Color(47,150,255,255), " restarted " , Mercury.Config.Colors.Server,"Mercury."} 
+end
+
+function MCMD.GenerateMenu(frame)
+
+end
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
 -- lua run
 local MCMD = Mercury.Commands.CreateTable("luarun", "", true, "<script>", true, false, true, "Rcon")
 function callfunc(caller,args)
@@ -247,14 +273,21 @@ for k,v in pairs(VOTEMAP_BLACKLIST) do
     end
 end
 
+local startTime = SysTime()
+
 function callfunc(caller,args)
+    local timeElapsed = math.floor((SysTime() - startTime)/60)
+
+    if timeElapsed < 45 then
+        return false,"Please wait " .. (45 - timeElapsed) .. " minutes before voting for another map."
+    end
     if VM_CHANGING==true then 
         return false,"The map is already changing! No further votes can be made."
     end
     if !args[1] then 
         return false,"No argument specified. Please specify a number or 'list' for maps. eg. !votemap list"
     end
-    local TVOTES_NEEDED = math.ceil(#player.GetAll() / 2)
+    local TVOTES_NEEDED = math.ceil(#player.GetAll())
     if args[1]=="list" then 
         if !IsValid(caller) then 
             for k,v in pairs(VOTEMAP_MAPS) do 

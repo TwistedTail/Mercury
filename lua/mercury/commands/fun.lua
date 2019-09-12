@@ -147,14 +147,15 @@ function callfunc(caller,args)
                         explosive:SetKeyValue( "iMagnitude", "1" )
                         explosive:Fire( "Explode", 0, 0 )
 
-        for I=1,6 do
+        for I=1,30 do
             rmtab[I] = ents.Create("prop_physics")
             rmtab[I]:SetModel("models/Roller.mdl")
             rmtab[I]:SetPos(ply:GetPos() + Vector(math.random(-50,50) ,math.random(-50,50) ,math.random(-50,50)))
             rmtab[I]:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
             rmtab[I]:Spawn()
-            local trail = util.SpriteTrail(rmtab[I], 0, Color(math.random(1,255) ,math.random(1,255) ,math.random(1,255) ), false, 15, 1, 10, 3, "trails/plasma.vmt")
+            local trail = util.SpriteTrail(rmtab[I], 0, Color(math.random(1,255) ,math.random(1,255) ,math.random(1,255) ), false, 15, 1, 10, 3, "effects/beam_generic01.vmt")
             rmtab[I]:GetPhysicsObject():SetVelocityInstantaneous(Vector(math.random(-1000,1000) ,math.random(-1000,1000) ,1000))
+            rmtab[I]:Ignite()
         end
         timer.Simple(10,function()
             for k,v in pairs(rmtab) do
@@ -638,7 +639,7 @@ function callfunc(caller, args)
         -- Set the new health
         local health = tonumber(args[2])
         args[1]:SetHealth(health)
-        return true, "", true, {Mercury.Config.Colors.Server, caller, Mercury.Config.Colors.Default, " has set the hp of ", args[1], " to ", Mercury.Config.Colors.Arg, health, Mercury.Config.Colors.Default, "."}
+        return true, "", true, {Mercury.Config.Colors.Server, caller, Mercury.Config.Colors.Default, " has set the hp of ", args[1], " to ", Mercury.Config.Colors.Arg, args[2], Mercury.Config.Colors.Default, "."}
     end
     
     -- Finish!
@@ -1055,6 +1056,175 @@ Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
 
 
+MCMD = {
+    ["Command"] = "10-13",
+    ["Verb"] = "asd",
+    ["RconUse"] = true,
+    ["Useage"] = "<location>",
+    ["UseImmunity"] =  false,
+    ["HasMenu"] = false,
+    ["Category"] = "Fun",
+    ["PlayerTarget"] = false,
+    ["AllowWildcard"] = false
+}
+
+local function kelvtofar(num)
+    return tostring( ( math.Round(num - 273.15) * 1.8000) + 32) .. "°F"
+end
+local function kelvtocelc(num)
+    return tostring( math.Round((num - 273)) ) .. "°C"
+end
+
+function callfunc(caller, args)
+    if not args[1] then return false, "@SYNTAX_ERR" end
+
+    local str = table.concat(args," ")
+    str = string.Replace(str," ","%20")
+
+
+    http.Fetch("http://api.openweathermap.org/data/2.5/weather?q=" .. str .. "&appid=fbff08b113b646759aafdaffee2fc48e",function(jas)
+           if !jas then 
+                 Mercury.Util.SendMessage(caller,{Mercury.Config.Colors.Error," A problem happened while looking for \"" .. args[1] .. "\""})
+           end
+
+            local weather = util.JSONToTable(jas)
+            if string.find(jas,"Bad") or weather["cod"] == "404" then 
+                
+                Mercury.Util.SendMessage(caller,{Mercury.Config.Colors.Error,"We can't find any location with \"" .. args[1] .. "\""})
+                return
+            end
+
+            if weather["main"] then 
+              
+                Mercury.Util.SendMessage(player.GetAll(),{Mercury.Config.Colors.Default,"Weather for \"",Mercury.Config.Colors.Arg, weather["name"] ,Mercury.Config.Colors.Default,"\". ", " It is ", Mercury.Config.Colors.Arg, kelvtofar(weather["main"]["temp"]) ," (",kelvtocelc(weather["main"]["temp"]),")", Mercury.Config.Colors.Default,  " and ", Mercury.Config.Colors.Arg, tostring(weather["main"]["humidity"]) ,"%",Mercury.Config.Colors.Default," humidity with ", Mercury.Config.Colors.Arg, weather["weather"][1]["description"]   })
+       
+                return
+            end
+
+
+            
+
+    end ,function(ohno) 
+
+  end)
+    return true,{},true,{}
+end
+
+function MCMD.GenerateMenu(frame)
+
+end
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+MCMD = {
+    ["Command"] = "weather",
+    ["Verb"] = "asd",
+    ["RconUse"] = true,
+    ["Useage"] = "<location>",
+    ["UseImmunity"] =  false,
+    ["HasMenu"] = false,
+    ["Category"] = "Fun",
+    ["PlayerTarget"] = false,
+    ["AllowWildcard"] = false
+}
+
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+local qarr = {
+
+    "vo/scout_laughlong02.mp3",
+    "vo/pyro_laugh_addl04.mp3",
+    "vo/soldier_laughlong02.mp3",
+    "vo/demoman_laughlong02.mp3",
+    "vo/heavy_laugherbigsnort01.mp3",
+    "vo/engineer_laughlong02.mp3",
+    "vo/medic_laughlong02.mp3",
+    "vo/sniper_laughlong02.mp3",
+    "vo/spy_laughlong01.mp3",
+    
+    "vo/demoman_jeers07.mp3",
+    "vo/engineer_jeers01.mp3",
+    "vo/heavy_jeers08.mp3",
+    "vo/medic_jeers04.mp3",
+    "vo/pyro_jeers01.mp3",
+    "vo/scout_jeers11.mp3",
+    "vo/sniper_jeers01.mp3",
+    "vo/soldier_jeers03.mp3",
+    "vo/spy_jeers06.mp3"
+    
+ }
+
+
+local garr = {
+    
+    "vo/scout_laughlong02.mp3",
+    "vo/pyro_laugh_addl04.mp3",
+    "vo/soldier_laughlong02.mp3",
+    "vo/demoman_laughlong02.mp3",
+    "vo/heavy_laugherbigsnort01.mp3",
+    "vo/engineer_laughlong02.mp3",
+    "vo/medic_laughlong02.mp3",
+    "vo/sniper_laughlong02.mp3",
+    "vo/spy_laughlong01.mp3",
+}
+
+
+local badarr = {
+        "vo/demoman_jeers07.mp3",
+    "vo/engineer_jeers01.mp3",
+    "vo/heavy_jeers08.mp3",
+    "vo/medic_jeers04.mp3",
+    "vo/pyro_jeers01.mp3",
+    "vo/scout_jeers11.mp3",
+    "vo/sniper_jeers01.mp3",
+    "vo/soldier_jeers03.mp3",
+    "vo/spy_jeers06.mp3"
+}
+
+
+MCMD = {
+    ["Command"] = "joke",
+    ["Verb"] = "asd",
+    ["RconUse"] = true,
+    ["Useage"] = "<location>",
+    ["UseImmunity"] =  false,
+    ["HasMenu"] = false,
+    ["Category"] = "Fun",
+    ["PlayerTarget"] = false,
+    ["AllowWildcard"] = false
+}
+
+
+ function callfunc(caller, args)
+    local laugh = table.Random(qarr)
+    if args[1] then 
+        if args[1]=="good" then 
+            laugh = table.Random(garr)
+        elseif args[1]=="bad" then 
+            laugh = table.Random(badarr)
+        end 
+
+    end 
+    
+    for k,v in pairs(player.GetAll()) do 
+        v:SendLua([[
+            surface.PlaySound("mercury/budum.mp3")
+            ]])
+
+    end 
+
+
+    return true,{},true,{}
+end
+
+function MCMD.GenerateMenu(frame)
+
+end
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+
+
 
 
 
@@ -1211,3 +1381,199 @@ Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
 
 
+                    
+local MCMD = Mercury.Commands.CreateTable("tslap", "turbo slapped", true, "<player>", true, true, true, "Fun")
+
+
+function callfunc(caller,args)
+        local target_player = nil
+    local damage = args[2] or 0
+    local sSounds = {
+        "physics/body/body_medium_impact_hard1.wav",
+        "physics/body/body_medium_impact_hard2.wav",
+        "physics/body/body_medium_impact_hard3.wav",
+        "physics/body/body_medium_impact_hard5.wav",
+        "physics/body/body_medium_impact_hard6.wav",
+        "physics/body/body_medium_impact_soft5.wav",
+        "physics/body/body_medium_impact_soft6.wav",
+        "physics/body/body_medium_impact_soft7.wav",
+    }
+
+    if not args[1] then return false, "No target player was defined." end
+
+
+    if IsValid(args[1]) and args[1]:IsPlayer() then 
+        if not args[1]:Alive() then return end
+        args[1]:ExitVehicle()
+        if args[1]:GetMoveType() == MOVETYPE_NOCLIP then
+            args[1]:SetMoveType(MOVETYPE_WALK)
+        end
+
+        args[1]:EmitSound(sSounds[math.random(#sSounds)])
+        
+        local direction = Vector(math.random(9999) - 10, math.random(99999) - 10, math.random(80) - 5)
+        local accel = direction * 50
+        args[1]:SetPos(args[1]:GetPos() + Vector(0,0,8))
+        args[1]:SetVelocity(accel)
+
+        -- Angular punch
+        local angle_punch_pitch = math.Rand( -20, 20 )
+        local angle_punch_yaw = math.sqrt( 20*20 - angle_punch_pitch * angle_punch_pitch )
+        if math.random( 0, 1 ) == 1 then
+            angle_punch_yaw = angle_punch_yaw * -1
+        end
+        args[1]:ViewPunch(Angle(angle_punch_pitch, angle_punch_yaw, 0))
+
+        -- Deal with their health
+        local newHp = args[1]:Health() - damage
+        if newHp <= 0 then
+            if args[1]:IsPlayer() then
+                args[1]:Kill()
+            end
+        else
+            -- Set the new health
+            args[1]:SetHealth(newHp)
+        end
+    end
+
+
+
+    for I=1,10 do 
+        args[1]:EmitSound("mvm/mvm_tank_explode.wav")
+    end 
+    ParticleEffect("cinefx_goldrush",args[1]:GetPos(),Angle(0,0,0),args[1])
+
+    return true,"",false,{}
+end
+
+function MCMD.GenerateMenu(frame)
+    local selectedplayer = nil
+ 
+    local ctrl = vgui.Create( "DListView", frame)
+    ctrl:AddColumn( "Players" )
+    ctrl:SetSize( 210, 380 )    
+    ctrl:SetPos( 10, 0 )
+               
+    local Button = vgui.Create( "DButton" , frame)
+    Button:SetPos( 240, 40 )
+    Button:SetText( "Turbo-Slap" )
+    Button:SetSize( 130, 60 )
+    Button:SetDisabled(true)
+    Button.DoClick = function(self)
+        if self:GetDisabled()==true then return false end
+        surface.PlaySound("buttons/button3.wav")
+        net.Start("Mercury:Commands")
+            net.WriteString("tslap")
+            net.WriteTable({selectedplayer})
+        net.SendToServer()
+    end
+ 
+    local players = player.GetAll()
+    local t = {}
+    for _, ply in ipairs( players ) do
+        local item = ctrl:AddLine( ply:Nick() )
+        item.ply = ply
+    end
+ 
+    function ctrl:OnRowSelected(lineid,isselected)
+        local line_obj = self:GetLine(lineid)
+        surface.PlaySound("buttons/button6.wav")
+        Button:SetDisabled(false)
+        selectedplayer = line_obj.ply
+        return true
+    end
+end 
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+if SERVER then 
+    util.AddNetworkString("drama")
+end 
+if CLIENT then 
+
+    net.Receive("drama",function()
+        local abl = net.ReadString()
+        if abl=="start" then 
+            if DRAMA then 
+                DRAMA:Stop()
+                DRAMA = nil 
+            end
+            sound.PlayURL("http://onstorm.ca/drama.mp3","",function(B)
+                DRAMA = B
+                DRAMA:SetVolume(0.5)
+            end)
+        end
+        if abl=="stop" then 
+            if DRAMA then
+                DRAMA:Stop()
+                DRAMA = nil 
+            end
+        end
+        
+        
+
+    end)
+
+
+end 
+
+
+
+MCMD = {
+    ["Command"] = "drama",
+    ["Verb"] = "achievement",
+    ["RconUse"] = true,
+    ["Useage"] = "<player> <name>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = false,
+    ["Category"] = "Fun",
+    ["PlayerTarget"] = false,
+    ["AllowWildcard"] = true
+}
+
+
+ function callfunc(caller, args)
+    if args[1]=="start" then 
+        net.Start("drama")
+            net.WriteString("start")
+        net.Broadcast()
+        return true,{},true,{caller,Mercury.Config.Colors.Default, " has started a dramatic moment. "}
+    end 
+    if args[1]=="stop" then 
+        net.Start("drama")
+            net.WriteString("stop")
+        net.Broadcast()
+        return true,{},true,{caller,Mercury.Config.Colors.Default, " has stopped a dramatic moment. "}
+    end 
+        
+    return true,{},true,{}
+end
+
+function MCMD.GenerateMenu(frame)
+
+end
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+-- tsay
+MCMD = {}
+MCMD.Command = "@"
+MCMD.Verb = "tsaid"
+MCMD.RconUse = true
+MCMD.Useage = ""
+MCMD.UseImmunity = false
+MCMD.PlayerTarget = false
+MCMD.HasMenu = false
+MCMD.Category = "Fun" 
+ 
+function callfunc(caller, args)
+    if !args[1] then
+        return false,"No message to print specified."
+    end
+    local str = table.concat(args," ")
+    for k,v in pairs(player.GetAll()) do
+        v:ChatPrint(str)
+    end
+end
+
+
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)

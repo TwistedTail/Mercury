@@ -54,9 +54,9 @@ function callfunc(caller,args)
 
     for k,v in pairs(player.GetAll()) do 
         v:EmitSound("weapons/metal_gloves_hit_world3.wav")
-
+        v:EmitSound("gsgtrainsounds/other/joke/lionel_traintown/traintown_collision.wav")
         v:SendLua([[util.ScreenShake(LocalPlayer():GetPos(),10,150,1.5,500)]])
-      
+            
         
     end
 
@@ -118,6 +118,52 @@ function MCMD.GenerateMenu(frame)
 end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
+MCMD = {
+    ["Command"] = "fkick",
+    ["Verb"] = "kicked",
+    ["RconUse"] = true,
+    ["Useage"] = "!kick <player> <reason>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = true,
+    ["Category"] = "Player Management",
+    ["UseCustomPrivCheck"] = false,
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = false
+}
+
+
+function callfunc(caller,args)
+    if !args[2] then 
+        args[2] = "Kicked by administrator."
+    end
+
+    timer.Simple(0.1,function() 
+//        args[1]:Kick(args[2])
+    end)
+
+
+    for k,v in pairs(player.GetAll()) do 
+        v:EmitSound("weapons/metal_gloves_hit_world3.wav")
+        v:EmitSound("gsgtrainsounds/other/joke/lionel_traintown/traintown_collision.wav")
+        v:SendLua([[util.ScreenShake(LocalPlayer():GetPos(),10,150,1.5,500)]])
+            
+        
+    end
+
+        
+    timer.Simple(2, function()
+        for k,v in pairs(player.GetAll()) do 
+            
+               // v:EmitSound("gsgtrainsounds/other/joke/lionel_traintown/traintown_fenderbender.wav")
+            
+        end
+    end)
+
+    return true, "heh",true, {Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has kicked ", args[1], Mercury.Config.Colors.Arg ," (", args[2],")"}
+end
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
 
 -- Ban
 MCMD = {
@@ -132,10 +178,32 @@ MCMD = {
     ["PlayerTarget"] = true,
     ["AllowWildcard"] = false
 }
+/*
+local bansounds = {
+    "vo/engineer_specialcompleted01.mp3",
+    "vo/engineer_specialcompleted02.mp3",
+    "vo/engineer_specialcompleted07.mp3",
+    "vo/engineer_niceshot01.mp3",
+    "vo/engineer_dominationheavy06.mp3",
+    "vo/engineer_dominationheavy10.mp3",
+    "vo/engineer_dominationheavy11.mp3",
+    "vo/engineer_dominationheavy14.mp3",
+    "vo/engineer_dominationheavy15.mp3",
+    "vo/engineer_dominationpyro04.mp3",
+    "vo/engineer_dominationscout03.mp3",
+    "vo/engineer_dominationscout06.mp3",
+    "vo/engineer_dominationsniper06.mp3",
+    "vo/engineer_goldenwrenchkill02.mp3",
+    "vo/engineer_goldenwrenchkill03.mp3",
+    "vo/engineer_laughevil02.mp3",
+    "vo/engineer_laughhappy03.mp3",
+    "vo/engineer_dominationheavy02.mp3",
 
+}
+*/
 function callfunc(caller,args)
     if !args[2] or !tonumber(args[2]) then
-        args[2]=0
+        return false, "No time specified"
     end
     if !args[3] then 
         args[3] = "Banned by administrator"
@@ -254,6 +322,98 @@ function MCMD.GenerateMenu(frame)
 end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
+
+-- Ban
+MCMD = {
+    ["Command"] = "fban",
+    ["Verb"] = "banned",
+    ["RconUse"] = true,
+    ["Useage"] = "!ban <player> <time> <reason>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = false,
+    ["Category"] = "Player Management",
+    ["UseCustomPrivCheck"] = false,
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = false
+}
+/*
+local bansounds = {
+    "vo/engineer_specialcompleted01.mp3",
+    "vo/engineer_specialcompleted02.mp3",
+    "vo/engineer_specialcompleted07.mp3",
+    "vo/engineer_niceshot01.mp3",
+    "vo/engineer_dominationheavy06.mp3",
+    "vo/engineer_dominationheavy10.mp3",
+    "vo/engineer_dominationheavy11.mp3",
+    "vo/engineer_dominationheavy14.mp3",
+    "vo/engineer_dominationheavy15.mp3",
+    "vo/engineer_dominationpyro04.mp3",
+    "vo/engineer_dominationscout03.mp3",
+    "vo/engineer_dominationscout06.mp3",
+    "vo/engineer_dominationsniper06.mp3",
+    "vo/engineer_goldenwrenchkill02.mp3",
+    "vo/engineer_goldenwrenchkill03.mp3",
+    "vo/engineer_laughevil02.mp3",
+    "vo/engineer_laughhappy03.mp3",
+    "vo/engineer_dominationheavy02.mp3",
+
+}
+*/
+function callfunc(caller,args)
+    if !args[2] or !tonumber(args[2]) then
+        return false, "No time specified"
+    end
+    if !args[3] then 
+        args[3] = "Banned by administrator"
+    end
+
+
+    local bancolor = Color(0,0,255)
+    local timestring = args[2] .. " minutes"
+    if tonumber(args[2])==0 then
+        bancolor = Color(255,0,0)
+        timestring = "eternity"
+    end
+
+
+        local ARC = {
+                "weapons/demo_charge_hit_flesh_range3.wav",
+            "weapons/demo_charge_hit_flesh_range2.wav",
+                "weapons/demo_charge_hit_flesh_range1.wav"
+        }
+        local am = table.Random(ARC)
+        for k,v in pairs(player.GetAll()) do 
+            v:SendLua([[util.ScreenShake(LocalPlayer():GetPos(),10,150,0.7,500)]])
+            v:EmitSound(am)
+        end
+
+
+
+
+
+    /*
+    local asnd = "vo/engineer_paincrticialdeath0" .. math.random(1,6) .. ".mp3"
+    for k,v in pairs(player.GetAll()) do 
+        v:EmitSound("weapons/tf2_back_scatter_crit.wav")
+        
+            v:EmitSound(asnd)
+        
+    end
+    local comment = table.Random(bansounds)
+    timer.Simple(4,function()
+        for k,v in pairs(player.GetAll()) do 
+            
+                v:EmitSound(comment)
+            
+        end
+    end)
+*/
+    return true, "heh", true, {Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has banned ", args[1], " for ", bancolor,timestring," ", Mercury.Config.Colors.Arg ," (", args[3],")"}
+end
+
+
+
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
 
 

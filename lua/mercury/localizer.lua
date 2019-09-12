@@ -4,7 +4,7 @@ Mercury.Localization = {}
 
 local locmt_idx = {
 	__index =  function(self,idx)
-		return rawget(self,idx) or "{Missing localizer string " .. idx .. "}"
+		return rawget(self,idx) or "{? " .. idx .. "}"
 	end
 
 }
@@ -37,12 +37,3 @@ function Mercury.Localizer.SetString(str,text)
 	Mercury.Localization[str] = text
 end
 
-if CLIENT  then 
-	Mercury.ModHook.Add("GotConfig","SetLanguage",function()
-		print(" DO IT ")
-		Mercury.Localizer.SetLanguage(Mercury.Config.Language)
-	end )
-
-else 
-		Mercury.Localizer.SetLanguage(Mercury.Config.Language)
-end 

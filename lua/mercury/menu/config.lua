@@ -324,6 +324,46 @@ Mercury.Menu.AddConfigGroup("colors","System Chat Colors",ColorControlMenu)
 
 
 
+local function MOTDMenu(frame)
+	local UseTeamsCheckBox = vgui.Create("DCheckBox",frame)
+		UseTeamsCheckBox:SetPos(0,10)		
+		local UseTeamsLabel = vgui.Create( "DLabel", frame )
+		UseTeamsLabel:SetPos( 20, 10 )
+		UseTeamsLabel:SetText( "Show the MOTD at spawn?" )
+		UseTeamsLabel:SetTextColor(Color(1,1,1,255))
+		UseTeamsLabel:SizeToContents()
+		UseTeamsCheckBox:SetChecked(Mercury.Config.UseMOTD)
+
+	function UseTeamsCheckBox:OnChange(val)
+			net.Start("Mercury:Commands")
+				net.WriteString("setusemotd")
+				net.WriteTable({tostring(val)})
+			net.SendToServer()
+
+	end
+
+
+	local OrderBox = vgui.Create( "DTextEntry", frame )
+	OrderBox:SetPos( 0, 36 )
+	OrderBox:SetSize( 375, 16 )
+	OrderBox:SetText( Mercury.Config.MotdURL )
+
+	function OrderBox:OnEnter(self)
+		net.Start("Mercury:Commands")
+			net.WriteString("setmotdurl")
+			net.WriteTable({OrderBox:GetValue()})
+		net.SendToServer()
+	end
+
+
+
+end
+
+Mercury.Menu.AddConfigGroup("motd","MOTD Configuration",MOTDMenu)
+
+
+
+
 
 
 Mercury.ModHook.Call("AddConfigGroups")
